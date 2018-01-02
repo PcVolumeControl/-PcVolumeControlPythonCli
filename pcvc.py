@@ -38,7 +38,7 @@ class PcvgClient(object):
     def __init__(self, servername, port):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.servername = servername
-        self.port = port
+        self.port = int(port)
         self.connected = False
         self.server_version = None
 
@@ -69,6 +69,7 @@ class PcvgClient(object):
         # data going out has to be bytes-encoded.
         print("JSON string being sent to the server:\n")
         pprint(jstring)
+        jstring = jstring + '\n'
         self.client.send(jstring.encode())
 
     def disconnect(self):
@@ -132,17 +133,20 @@ class PcvgClient(object):
 def main(arguments):
     """Run the volume control client."""
 
+    my_client = PcvgClient(servername=arguments.server_name, port=arguments.server_port)
+    my_client.connect()
+
     if arguments.watch:
         try:
             while True:
                 print(chr(27) + "[2J")  # clear screen
-                my_client = PcvgClient(servername=arguments.server_name, port=arguments.server_port)
-                my_client.connect()
                 pprint(my_client.state)
                 my_client.disconnect()
                 time.sleep(0.5)
         except KeyboardInterrupt:
             print('Exiting...')
+            my_client.disconnect()
+            sys.exit()
 
     if arguments.interactive:
         # play around
@@ -151,9 +155,7 @@ def main(arguments):
         readline.set_completer(completer.complete)
         readline.parse_and_bind('tab: complete')
         while True:
-            my_client = PcvgClient(servername=arguments.server_name, port=arguments.server_port)
-            my_client.connect()
-            # pprint(my_client.state)
+
             sessions = my_client.state['defaultDevice']['sessions']
             command = input('what do? > ')
             params = command.split()
@@ -188,11 +190,8 @@ def main(arguments):
                 print('There was a problem with your command. Maybe add arguments?')
                 print(f'The commands available are: {commands}')
             except KeyboardInterrupt:
-                sys.exit()
-            finally:
-                # disconnect and reconnect to get new state from the server
                 my_client.disconnect()
-
+                sys.exit()
 
 
 if __name__ == '__main__':
