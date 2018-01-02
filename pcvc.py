@@ -3,7 +3,7 @@
 """This is a PC Volume Control Python client.
 """
 
-__version__ = 5
+__version__ = 6
 
 import argparse
 from pprint import pprint
