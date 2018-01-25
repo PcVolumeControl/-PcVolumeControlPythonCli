@@ -150,7 +150,7 @@ def main(arguments):
 
     if arguments.interactive:
         # play around
-        commands = ['toggle', 'volume', 't', 'v', 'sessions', 'scary']
+        commands = ['toggle', 'volume', 't', 'v', 'sessions', 'scary', 'json']
         completer = MyCompleter(commands)
         readline.set_completer(completer.complete)
         readline.parse_and_bind('tab: complete')
@@ -184,6 +184,9 @@ def main(arguments):
                     # Just allow them to send whatever they paste into the terminal.
                     unsanitized_frightening_input = input('Enter some JSONt to send:')
                     my_client.push_update(unsanitized_frightening_input)
+                    pprint(my_client.state)
+                if params[0] == 'json':
+                    # just dump the current state dict
                     pprint(my_client.state)
 
             except IndexError:
