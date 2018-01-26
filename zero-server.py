@@ -28,14 +28,19 @@ if __name__ == '__main__':
 
     # docs:
     # https://github.com/jstasiak/python-zeroconf/blob/master/zeroconf.py#L1363
-    info = ServiceInfo(type_="_pcvc._tcp.local.",
-                       name="_pcvc._tcp.local.",
+
+
+    desc = {'missiles': 'armed'}
+
+    info = ServiceInfo(type_="_http._tcp.local.",
+                       name="pcvolumecontrol._http._tcp.local.",
                        address=socket.inet_aton(THE_SERVER_IP),
                        port=THE_SERVER_PORT,
                        weight=0,
                        priority=0,
-                       properties={},
-                       server="_pcvc._tcp.")
+					   properties=desc,
+					   server="myservername.local.")
+
 
     zeroconf = Zeroconf()
     print("Registration of a service, press Ctrl-C to exit...")
